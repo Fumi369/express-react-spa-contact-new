@@ -1,0 +1,20 @@
+{
+  "name": "express-react-spa-contact",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "init": "run-p init:*",
+    "init:frontend": "npm install --prefix frontend",
+    "init:backend": "npm install --prefix backend && npm run db:migrate",
+    "db:migrate": "npm run db:migrate --prefix backend",
+    "dev": "run-p dev:backend dev:frontend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "dev:backend": "npm run dev --prefix backend",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "ms2sato",
+  "license": "ISC",
+  "dependencies": {
+    "npm-run-all": "^4.1.5"
+  }
+}
