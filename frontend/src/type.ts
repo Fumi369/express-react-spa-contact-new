@@ -3,3 +3,9 @@ export type Contact = {
   email: string;
   name: string;
 };
+
+export type ContactListProps = {
+  page: number;
+  limit: number;
+  order: boolean;
+};

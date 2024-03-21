@@ -1,5 +1,3 @@
-import { Contact } from "./type";
-
 const wrapPromise = <T>(promise: Promise<T>) => {
   let status = "pending";
   let result: T;
@@ -28,10 +26,7 @@ const wrapPromise = <T>(promise: Promise<T>) => {
   };
 };
 
-export const request = async <T>(
-  path: string,
-  init?: RequestInit
-): Promise<T> => {
+export const request = async <T>(path: string, init?: RequestInit): Promise<T> => {
   const ret = await fetch(`http://localhost:8000/${path}`, init);
   if (!ret.ok) {
     throw new Error("Request failed");
@@ -41,10 +36,7 @@ export const request = async <T>(
 
 const suspended: Record<string, { read: () => unknown }> = {};
 
-export const generateSuspended = <T>(
-  promiseBuilder: () => Promise<T>,
-  key: string
-) => {
+export const generateSuspended = <T>(promiseBuilder: () => Promise<T>, key: string) => {
   return () => {
     if (suspended[key] === undefined) {
       suspended[key] = wrapPromise(promiseBuilder());
@@ -55,15 +47,27 @@ export const generateSuspended = <T>(
 
 const apiPort = 8000;
 
-export const requestGetContacts = async () => {
-  const ret = await fetch(`http://localhost:${apiPort}/contacts`);
-  if (!ret.ok) {
-    throw new Error("Request failed");
-  }
-  return (await ret.json()) as Contact[];
+export const requestGet = <R = Record<string, unknown>>(path: string) => {
+  const req = async () => {
+    const ret = await fetch(`http://localhost:${apiPort}${path}`);
+    if (!ret.ok) {
+      throw new Error("Request failed");
+    }
+    return (await ret.json()) as R;
+  };
+
+  return generateSuspended(req, path)();
 };
 
-export const getContacts = generateSuspended(
-  requestGetContacts,
-  "requestGetContacts"
-);
+// export const requestGetContacts = async () => {
+//   const ret = await fetch(`http://localhost:${apiPort}/contacts`);
+//   if (!ret.ok) {
+//     throw new Error("Request failed");
+//   }
+//   return (await ret.json()) as Contact[];
+// };
+
+// export const getContacts = generateSuspended(
+//   requestGetContacts,
+//   "requestGetContacts"
+// );
